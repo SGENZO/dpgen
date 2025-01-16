@@ -93,6 +93,23 @@ plt.text((x1)/2, (0+y1)/4, 'FCC', fontsize=24, ha='center', va='center')
 plt.text((x1 + x2)/1.3, (y1 + y2)/4, 'HCP', fontsize=24, ha='center', va='center') 
 plt.text((x2 + x3)/2, y2, 'BCC', fontsize=24, ha='center', va='center')
 
+# 获取hcp曲线数据
+hcp_data = phases['hcp']
+hcp_filepath = os.path.join(data_dir, hcp_data['file'])
+hcp_df = pd.read_csv(hcp_filepath)
+hcp_spline = UnivariateSpline(hcp_df['pressure_GPa'], hcp_df['temperature_1000K'], s=0.5)
+
+# 计算并标注x=2和x=45处的点
+x_points = [2.5, 35]
+for x in x_points:
+    y = hcp_spline(x)
+    plt.plot(x, y, 'ro', markersize=8)
+    plt.annotate(f'({x:.1f}, {y:.2f})', 
+                 xy=(x, y), 
+                 xytext=(x, y+0.5),
+                 fontsize=12,
+                 arrowprops=dict(facecolor='black', shrink=0.05))
+
 # 设置网格和图例
 plt.grid(True, linestyle='--', alpha=0.7)
 plt.legend(fontsize=12, loc='upper left')
